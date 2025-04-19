@@ -1,0 +1,44 @@
+run:
+  timeout: 2m
+  tests: true
+
+linters:
+  enable:
+    - govet
+    - staticcheck
+    - gofmt
+    - goimports
+    - revive
+    - errcheck
+    - unused
+    - gosimple
+    - structcheck
+    - typecheck
+    - ineffassign
+    - deadcode
+    - depguard
+
+linters-settings:
+  goimports:
+    local-prefixes: github.com/yourname/yourproject
+
+  revive:
+    severity: warning
+    rules:
+      - name: var-naming
+        arguments: ["camelCase"]
+
+  depguard:
+    list-type: blacklist
+    packages:
+      - github.com/pkg/errors
+    packages-with-error-message:
+      github.com/pkg/errors: "Use standard `errors` package instead."
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 50
+  max-same-issues: 3
+
+output:
+  format: colored-line-number
