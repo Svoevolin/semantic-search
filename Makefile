@@ -1,12 +1,15 @@
 .DEFAULT_GOAL := help
 
--include services/api/Makefile
+ENV_FILE := .env
+COMPOSE_FILE := infra/docker-compose/docker-compose.yaml
+
+-include services/ui-api/Makefile
 
 up: ## Запуск docker-compose
-	docker-compose --env-file infra/docker-compose/.env -f infra/docker-compose/docker-compose.yaml up --build
+	docker-compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) up --build
 
 down: ## Остановка docker-compose
-	docker-compose --env-file infra/docker-compose/.env -f infra/docker-compose/docker-compose.yaml down
+	docker-compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) down
 
 env: ## Копирует .env.sample → .env (если не существует)
 	cp samples/.env .env
