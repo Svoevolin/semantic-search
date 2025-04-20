@@ -8,7 +8,7 @@ import (
 
 func PublicServerCORSMiddleware(cfg *config.App) echo.MiddlewareFunc {
 	return middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: cfg.PublicServer.AllowOrigins,
-		AllowMethods: cfg.PublicServer.AllowMethods,
+		AllowOrigins: cfg.AllowOrigins,
+		AllowMethods: cfg.AllowMethods,
 	})
 }

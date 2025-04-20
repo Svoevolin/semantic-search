@@ -9,7 +9,6 @@ import (
 )
 
 type App struct {
-	//DB
 	Logger
 	PublicServer
 }

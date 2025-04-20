@@ -25,6 +25,7 @@ func NewContainer(ctx context.Context, cfg config.App) (*Container, error) {
 	return c, err
 }
 
+//nolint:unparam
 func (c *Container) initContainer(_ context.Context, cfg config.App) error {
 	c.Config = &cfg
 	c.Logger = sl.NewLogger(c.Config)

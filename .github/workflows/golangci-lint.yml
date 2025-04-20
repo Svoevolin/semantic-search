@@ -17,9 +17,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: services/ui-api/go.mod
+          go-version-file: ${{ env.UI_API_SERVICE_PATH }}/go.mod
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.64.8
+          version: v2.1.2
           working-directory: ${{ env.UI_API_SERVICE_PATH }}

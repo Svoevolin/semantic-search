@@ -43,7 +43,7 @@ func (s *PublicServer) Start() error {
 		return errors.New(op + ": didn't init echo")
 	}
 
-	return s.echo.Start(fmt.Sprintf(":%s", s.cfg.PublicServer.Port))
+	return s.echo.Start(fmt.Sprintf(":%s", s.cfg.Port))
 }
 
 func (s *PublicServer) Shutdown(ctx context.Context) error {
