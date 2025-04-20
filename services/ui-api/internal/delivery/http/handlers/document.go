@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"github.com/svoevolin/semantic-search/services/ui-api/internal/delivery/http/dto"
-	"github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/svoevolin/semantic-search/services/ui-api/internal/delivery/http/dto"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/domain"
+	"github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger"
 )
 
 type Document struct {

@@ -2,9 +2,10 @@ package config
 
 import (
 	"fmt"
+	"path/filepath"
+
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
-	"path/filepath"
 )
 
 type App struct {

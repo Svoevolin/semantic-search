@@ -25,5 +25,6 @@ func NewClient(client *http.Client, logger logger.Logger, cfg *config.App) *Clie
 
 func (c *Client) Search(ctx context.Context, query string) ([]domain.Document, error) {
 	const op = "adapter.searcher.client.Search"
+	_ = op
 	return []domain.Document{}, nil
 }
