@@ -1,18 +1,27 @@
 services:
-  postgres:
-    image: postgres:15
-    container_name: postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-      PGSSLMODE: ${DB_SSL_MODE}
-    ports:
-      - "${DB_PORT}:${DB_PORT}"
+  swagger-generator:
+    image: quay.io/goswagger/swagger:0.30.5
+    working_dir: /go/src/ui-api
+    command: generate spec -i ./api/swagger.general.yaml -o ./api/swagger.json --scan-models
     volumes:
-      - pg_data:/var/lib/postgresql/data
-      - ./init:/docker-entrypoint-initdb.d
+      - ../../services/ui-api:/go/src/ui-api
+    environment:
+      - GO111MODULE=on
+
+  #  postgres:
+#    image: postgres:15
+#    container_name: postgres
+#    restart: unless-stopped
+#    environment:
+#      POSTGRES_USER: ${DB_USER}
+#      POSTGRES_PASSWORD: ${DB_PASSWORD}
+#      POSTGRES_DB: ${DB_NAME}
+#      PGSSLMODE: ${DB_SSL_MODE}
+#    ports:
+#      - "${DB_PORT}:${DB_PORT}"
+#    volumes:
+#      - pg_data:/var/lib/postgresql/data
+#      - ./init:/docker-entrypoint-initdb.d
 
   minio:
     image: minio/minio

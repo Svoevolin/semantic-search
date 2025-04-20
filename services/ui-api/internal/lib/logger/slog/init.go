@@ -70,23 +70,44 @@ func setupLevel(level string) slog.Level {
 	}
 }
 
-func (l *SlogLogger) Debug(ctx context.Context, msg string, keysAndVals ...any) {
+func (l *SlogLogger) Debug(msg string, keysAndVals ...any) {
+	l.log.Debug(msg, keysAndVals...)
+}
+
+func (l *SlogLogger) Info(msg string, keysAndVals ...any) {
+	l.log.Info(msg, keysAndVals...)
+}
+
+func (l *SlogLogger) Warn(msg string, keysAndVals ...any) {
+	l.log.Warn(msg, keysAndVals...)
+}
+
+func (l *SlogLogger) Error(msg string, keysAndVals ...any) {
+	l.log.Error(msg, keysAndVals...)
+}
+
+func (l *SlogLogger) Panic(msg string, keysAndVals ...any) {
+	l.log.Log(context.Background(), LevelPanic, msg, keysAndVals...)
+	panic(msg)
+}
+
+func (l *SlogLogger) DebugContext(ctx context.Context, msg string, keysAndVals ...any) {
 	l.log.DebugContext(ctx, msg, keysAndVals...)
 }
 
-func (l *SlogLogger) Info(ctx context.Context, msg string, keysAndVals ...any) {
+func (l *SlogLogger) InfoContext(ctx context.Context, msg string, keysAndVals ...any) {
 	l.log.InfoContext(ctx, msg, keysAndVals...)
 }
 
-func (l *SlogLogger) Warn(ctx context.Context, msg string, keysAndVals ...any) {
+func (l *SlogLogger) WarnContext(ctx context.Context, msg string, keysAndVals ...any) {
 	l.log.WarnContext(ctx, msg, keysAndVals...)
 }
 
-func (l *SlogLogger) Error(ctx context.Context, msg string, keysAndVals ...any) {
+func (l *SlogLogger) ErrorContext(ctx context.Context, msg string, keysAndVals ...any) {
 	l.log.ErrorContext(ctx, msg, keysAndVals...)
 }
 
-func (l *SlogLogger) Panic(ctx context.Context, msg string, keysAndVals ...any) {
+func (l *SlogLogger) PanicContext(ctx context.Context, msg string, keysAndVals ...any) {
 	l.log.Log(ctx, LevelPanic, msg, keysAndVals...)
 	panic(msg)
 }

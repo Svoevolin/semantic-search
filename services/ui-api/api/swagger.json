@@ -1,0 +1,105 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "API for semantic document search",
+    "title": "Semantic Search UI API",
+    "version": "0.0.0"
+  },
+  "basePath": "/api/v1",
+  "paths": {
+    "/documents": {
+      "post": {
+        "description": "Performs a semantic search over available documents using the given query string.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "documents"
+        ],
+        "summary": "Semantic document search",
+        "operationId": "listDocuments",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DocumentListResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/ErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DocumentListRequest": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "description": "Semantic query text",
+          "type": "string",
+          "x-go-name": "Query",
+          "example": "sustainable development in corporate policy"
+        }
+      },
+      "x-go-package": "github.com/svoevolin/semantic-search/services/ui-api/internal/delivery/http/dto"
+    },
+    "DocumentListResponseItem": {
+      "type": "object",
+      "title": "DocumentListResponseItem - represents a single document in the list.",
+      "properties": {
+        "document_id": {
+          "description": "UUID of the document",
+          "type": "string",
+          "x-go-name": "DocumentID",
+          "example": "550e8400-e29b-41d4-a716-446655440000"
+        },
+        "file_name": {
+          "description": "Name of the file",
+          "type": "string",
+          "x-go-name": "FileName",
+          "example": "policy.pdf"
+        },
+        "match_score": {
+          "description": "Similarity score (if applicable)",
+          "type": "number",
+          "format": "double",
+          "x-go-name": "MatchScore",
+          "example": 0.91
+        },
+        "uploaded_at": {
+          "description": "Upload timestamp",
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "UploadedAt",
+          "example": "2025-04-20T10:00:00Z"
+        }
+      },
+      "x-go-package": "github.com/svoevolin/semantic-search/services/ui-api/internal/delivery/http/dto"
+    }
+  },
+  "responses": {
+    "DocumentListResponse": {
+      "description": "",
+      "schema": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/DocumentListResponseItem"
+        }
+      }
+    }
+  }
+}
