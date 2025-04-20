@@ -19,7 +19,7 @@ jobs:
         with:
           go-version-file: services/ui-api/go.mod
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v7
+        uses: golangci/golangci-lint-action@v4
         with:
-          version: v2.0
+          version: v1.64.8
           working-directory: ${{ env.UI_API_SERVICE_PATH }}
