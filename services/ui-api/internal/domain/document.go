@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"mime/multipart"
 	"time"
 )
 
@@ -12,10 +13,17 @@ type Document struct {
 	UploadedAt time.Time `json:"uploaded_at"`
 }
 
+type UploadedDocument struct {
+	DocumentID string
+	FileName   string
+	UploadedAt time.Time
+}
+
 type DocumentListQuery struct {
 	Query string
 }
 
 type DocumentService interface {
 	GetList(ctx context.Context, query DocumentListQuery) ([]Document, error)
+	Upload(ctx context.Context, file *multipart.FileHeader) (UploadedDocument, error)
 }

@@ -48,3 +48,34 @@ func (h *Document) List(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, dto.NewDocumentListResponse(results).Body)
 }
+
+// swagger:route POST /documents/upload documents uploadDocument
+//
+// # Upload a new PDF document
+//
+// Uploads a machine-readable PDF file to the server.
+//
+// Consumes:
+// - multipart/form-data
+//
+// Produces:
+// - application/json
+//
+// Responses:
+//
+//	200: UploadDocumentResponse
+//	400: ErrorResponse
+//	500: ErrorResponse
+func (h *Document) Upload(c echo.Context) error {
+	req := dto.UploadDocumentRequest{}
+	if err := c.Bind(&req); err != nil {
+		return err
+	}
+
+	result, err := h.service.Upload(c.Request().Context(), req.Model())
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, dto.NewUploadDocumentResponse(result))
+}

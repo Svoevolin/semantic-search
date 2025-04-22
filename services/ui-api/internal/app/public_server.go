@@ -68,4 +68,5 @@ func (s *PublicServer) v1(c *Container) {
 	v1 := s.echo.Group("/api/v1")
 
 	v1.POST("/documents", documentHandler.List)
+	v1.POST("/documents/upload", documentHandler.Upload)
 }
