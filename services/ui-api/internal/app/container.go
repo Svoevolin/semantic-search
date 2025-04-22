@@ -2,14 +2,10 @@ package app
 
 import (
 	"context"
-	"net/http"
-
-	"github.com/svoevolin/semantic-search/services/ui-api/internal/adapter/searcher"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/config"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/domain"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger"
 	sl "github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger/slog"
-	"github.com/svoevolin/semantic-search/services/ui-api/internal/service"
 )
 
 // Container is alphabetically ordered
@@ -31,10 +27,10 @@ func (c *Container) initContainer(_ context.Context, cfg config.App) error {
 	c.Logger = sl.NewLogger(c.Config)
 
 	// Adapter
-	searchClient := searcher.NewClient(http.DefaultClient, c.Logger, c.Config)
+	//searchClient := searcher.NewClient(http.DefaultClient, c.Logger, c.Config)
 
 	// Service
-	c.DocumentService = service.NewDocument(searchClient)
+	//c.DocumentService = service.NewDocument(searchClient)
 
 	return nil
 }

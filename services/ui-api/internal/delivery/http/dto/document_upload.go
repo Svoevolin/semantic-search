@@ -28,16 +28,16 @@ type UploadDocumentResponse struct {
 
 // swagger:model UploadDocumentResponseBody
 type UploadDocumentResponseBody struct {
-	// UUID of the document
+	// UUID of the uploaded document
 	// example: 550e8400-e29b-41d4-a716-446655440000
 	DocumentID string `json:"document_id"`
 
-	// Original file name
-	// example: contract.pdf
+	// Name of the uploaded file
+	// example: report.pdf
 	FileName string `json:"file_name"`
 
 	// Upload timestamp
-	// example: 2025-04-20T12:34:56Z
+	// example: 2025-04-20T10:00:00Z
 	UploadedAt time.Time `json:"uploaded_at"`
 }
 

@@ -77,5 +77,5 @@ func (h *Document) Upload(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(http.StatusOK, dto.NewUploadDocumentResponse(result))
+	return c.JSON(http.StatusOK, dto.NewUploadDocumentResponse(result).Body)
 }

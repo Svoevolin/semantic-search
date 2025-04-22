@@ -23,6 +23,10 @@ type DocumentListQuery struct {
 	Query string
 }
 
+type Searcher interface {
+	Search(ctx context.Context, query string) ([]Document, error)
+}
+
 type DocumentService interface {
 	GetList(ctx context.Context, query DocumentListQuery) ([]Document, error)
 	Upload(ctx context.Context, file *multipart.FileHeader) (UploadedDocument, error)

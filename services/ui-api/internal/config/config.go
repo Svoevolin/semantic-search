@@ -11,6 +11,7 @@ import (
 type App struct {
 	Logger
 	PublicServer
+	Minio
 }
 
 //type DB struct {
@@ -41,6 +42,14 @@ type PublicServer struct {
 type CORSConfig struct {
 	AllowOrigins []string `env:"UI_API_PUBLIC_SERVER_CORS_ALLOW_ORIGINS,notEmpty" envSeparator:","`
 	AllowMethods []string `env:"UI_API_PUBLIC_SERVER_CORS_ALLOW_METHODS,notEmpty" envSeparator:","`
+}
+
+type Minio struct {
+	Endpoint  string `env:"UI_API_MINIO_ENDPOINT,notEmpty"`
+	AccessKey string `env:"UI_API_MINIO_ACCESS_KEY,notEmpty"`
+	SecretKey string `env:"UI_API_MINIO_SECRET_KEY,notEmpty"`
+	Bucket    string `env:"UI_API_MINIO_BUCKET,notEmpty"`
+	UseSSL    bool   `env:"UI_API_MINIO_USE_SSL,notEmpty"`
 }
 
 func New[T any](files ...string) (T, error) {
