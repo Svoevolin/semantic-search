@@ -5,6 +5,8 @@ import (
 	"log/slog"
 )
 
+const RequestIDLogKey = "request_id"
+
 type CtxHandler struct {
 	Next slog.Handler
 }
@@ -15,10 +17,9 @@ func NewCtxHandler(handler slog.Handler) slog.Handler {
 
 // Handle - обработка записи лога с добавлением данных из контекста
 func (h CtxHandler) Handle(ctx context.Context, r slog.Record) error {
-	// Добавляем контекстные данные в лог
-	//if reqID, ok := ctx.Value("request_id").(string); ok {
-	//	r.AddAttrs(slog.String("request_id", reqID))
-	//}
+	if reqID, ok := ctx.Value(RequestIDLogKey).(string); ok {
+		r.AddAttrs(slog.String(RequestIDLogKey, reqID))
+	}
 
 	return h.Next.Handle(ctx, r)
 }

@@ -3,9 +3,8 @@ package app
 import (
 	"context"
 	"fmt"
-	"net/http"
-
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/adapter"
+	"github.com/svoevolin/semantic-search/services/ui-api/internal/adapter/httpclient"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/config"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/domain"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger"
@@ -33,8 +32,15 @@ func (c *Container) initContainer(_ context.Context, cfg config.App) error {
 	c.Config = &cfg
 	c.Logger = sl.NewLogger(c.Config)
 
+	clientBuilder := httpclient.NewBuilder(httpclient.BuilderConfig{Logging: c.Config.LoggingOutgoingReqEnable}).
+		WithLogging(c.Logger).
+		WithRequestID()
+
 	// Adapter
-	searchClient := adapter.NewSearcherClient(http.DefaultClient, c.Logger, c.Config)
+	searchClient := adapter.NewSearcherClient(clientBuilder.Create(
+		httpclient.Config{Timeout: c.Config.Searcher.Timeout}), c.Logger, c.Config,
+	)
+
 	storageClient, err := adapter.NewMinioClient(c.Logger, c.Config)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)

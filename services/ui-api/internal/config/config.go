@@ -3,15 +3,19 @@ package config
 import (
 	"fmt"
 	"path/filepath"
+	"time"
 
 	"github.com/caarlos0/env/v11"
 	"github.com/joho/godotenv"
 )
 
 type App struct {
+	LoggingOutgoingReqEnable bool `env:"UI_API_LOGGING_OUTGOING_REQUESTS_ENABLE" envDefault:"true"`
+
 	Logger
 	PublicServer
 	Minio
+	Searcher
 }
 
 //type DB struct {
@@ -26,6 +30,10 @@ type App struct {
 //	LogLevel           string `env:"LOG_LEVEL, notEmpty"`
 //	TargetSessionAttrs string `env:"DB_TARGET_SESSION_ATTRS, notEmpty"`
 //}
+
+type Searcher struct {
+	Timeout time.Duration `env:"UI_API_SEARCHER_HTTPCLIENT_TIMEOUT" envDefault:"10s"`
+}
 
 type Logger struct {
 	Level   string `env:"UI_API_LOG_LEVEL,notEmpty"`

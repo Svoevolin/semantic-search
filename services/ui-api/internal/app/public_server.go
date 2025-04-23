@@ -31,6 +31,7 @@ func (s *PublicServer) Configure(container *Container) (*PublicServer, error) {
 	s.echo.Use(
 		echoMiddleware.Recover(),
 		middlewares.PublicServerCORSMiddleware(container.Config),
+		middlewares.RequestIDMiddleware(),
 	)
 
 	s.v1(container)
