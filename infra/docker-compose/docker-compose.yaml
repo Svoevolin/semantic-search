@@ -2,13 +2,15 @@ services:
   swagger-generator:
     image: quay.io/goswagger/swagger:0.30.5
     working_dir: /go/src/ui-api
+    profiles:
+      - swag
     command: generate spec -i ./api/swagger.general.yaml -o ./api/swagger.json --scan-models
     volumes:
       - ../../services/ui-api:/go/src/ui-api
     environment:
-      - GO111MODULE=on
+      - GO111MODULE=off
 
-  #  postgres:
+#    #  postgres:
 #    image: postgres:15
 #    container_name: postgres
 #    restart: unless-stopped

@@ -11,6 +11,7 @@ import (
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/delivery/http/handlers"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/delivery/http/middlewares"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 type PublicServer struct {
@@ -66,6 +67,10 @@ func (s *PublicServer) v1(c *Container) {
 
 	// Handler register
 	v1 := s.echo.Group("/api/v1")
+
+	v1.GET("/swagger/*", echoSwagger.EchoWrapHandler(func(c *echoSwagger.Config) {
+		c.URLs = []string{"/swagger.json"}
+	}))
 
 	v1.POST("/documents", documentHandler.List)
 	v1.POST("/documents/upload", documentHandler.Upload)

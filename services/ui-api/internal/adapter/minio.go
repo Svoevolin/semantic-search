@@ -26,7 +26,7 @@ type MinioClient struct {
 	logger     logger.Logger
 }
 
-func NewMinioClient(cfg config.App, logger logger.Logger) (*MinioClient, error) {
+func NewMinioClient(logger logger.Logger, cfg *config.App) (*MinioClient, error) {
 	client, err := minio.New(cfg.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(cfg.AccessKey, cfg.SecretKey, ""),
 		Secure: cfg.UseSSL,
@@ -58,6 +58,7 @@ func (m *MinioClient) Upload(ctx context.Context, file *multipart.FileHeader) (d
 		return domain.UploadResult{}, err
 	}
 	//noinspection GoUnhandledErrorResult
+	//nolint:errcheck
 	defer src.Close()
 
 	objectName := fmt.Sprintf("%d-%s", time.Now().UnixNano(), filepath.Base(file.Filename))
@@ -79,5 +80,4 @@ func (m *MinioClient) Upload(ctx context.Context, file *multipart.FileHeader) (d
 		ObjectName: info.Key,
 		URL:        objectURL,
 	}, nil
-
 }

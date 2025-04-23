@@ -18,7 +18,7 @@ type SearcherClient struct {
 	logger logger.Logger
 }
 
-func NewClient(client *http.Client, logger logger.Logger, cfg *config.App) *SearcherClient {
+func NewSearcherClient(client *http.Client, logger logger.Logger, cfg *config.App) *SearcherClient {
 	return &SearcherClient{
 		client: client,
 		logger: logger,

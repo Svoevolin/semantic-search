@@ -26,6 +26,7 @@ type UploadDocumentResponse struct {
 	Body UploadDocumentResponseBody
 }
 
+// UploadDocumentResponseBody - represents the response returned after a successful PDF file upload.
 // swagger:model UploadDocumentResponseBody
 type UploadDocumentResponseBody struct {
 	// UUID of the uploaded document

@@ -22,6 +22,7 @@ func (r DocumentListRequest) Model() domain.DocumentListQuery {
 // swagger:response DocumentListResponse
 type DocumentListResponse struct {
 	// in: body
+	// List of matching documents
 	Body []DocumentListResponseItem
 }
 
