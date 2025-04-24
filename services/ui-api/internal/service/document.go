@@ -9,18 +9,26 @@ import (
 	"github.com/google/uuid"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/domain"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger"
+	sl "github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger/slog"
 )
 
 type Document struct {
 	searcher      domain.Searcher
 	storageClient domain.StorageUploader
+	producer      domain.KafkaProducer
 	logger        logger.Logger
 }
 
-func NewDocument(searcher domain.Searcher, storage domain.StorageUploader, logger logger.Logger) *Document {
+func NewDocument(
+	searcher domain.Searcher,
+	storage domain.StorageUploader,
+	producer domain.KafkaProducer,
+	logger logger.Logger,
+) *Document {
 	return &Document{
 		searcher:      searcher,
 		storageClient: storage,
+		producer:      producer,
 		logger:        logger,
 	}
 }
@@ -30,20 +38,27 @@ func (s *Document) GetList(ctx context.Context, query domain.DocumentListQuery) 
 }
 
 func (s *Document) Upload(ctx context.Context, file *multipart.FileHeader) (domain.UploadedDocument, error) {
-	uploadResult, err := s.storageClient.Upload(ctx, file)
+	const op = "service.Document.Upload"
+
+	uploadRes, err := s.storageClient.Upload(ctx, file)
 	if err != nil {
 		return domain.UploadedDocument{}, fmt.Errorf("upload to storage failed: %w", err)
 	}
-	_ = uploadResult
 
-	documentID := uuid.New().String()
-	_ = documentID
+	docID := uuid.New().String()
 
-	// TODO: отправить в Kafka: documentID, uploadResult.URL и т.д.
+	err = s.producer.PublishUpload(ctx, domain.UploadEvent{
+		DocumentID: docID,
+		FileName:   file.Filename,
+		ObjectURL:  uploadRes.URL.String(),
+	})
+	if err != nil {
+		s.logger.ErrorContext(ctx, op, "publish to kafka failed", sl.Err(err))
+		return domain.UploadedDocument{}, fmt.Errorf("publish to kafka failed: %w", err)
+	}
 
-	// Сейчас просто имитация
 	return domain.UploadedDocument{
-		DocumentID: uuid.New().String(),
+		DocumentID: docID,
 		FileName:   file.Filename,
 		UploadedAt: time.Now().UTC(),
 	}, nil

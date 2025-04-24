@@ -36,15 +36,19 @@ func NewDocument(service domain.DocumentService, logger logger.Logger) *Document
 //	400: ErrorResponse
 //	500: ErrorResponse
 func (h *Document) List(c echo.Context) error {
+	const op = "handlers.document.List"
+	ctx := c.Request().Context()
+
 	req := dto.DocumentListRequest{}
 	if err := c.Bind(&req); err != nil {
 		return err
 	}
 
-	results, err := h.service.GetList(c.Request().Context(), req.Model())
+	results, err := h.service.GetList(ctx, req.Model())
 	if err != nil {
 		return err
 	}
+	h.logger.InfoContext(ctx, op, "documents found", "count", len(results))
 
 	return c.JSON(http.StatusOK, dto.NewDocumentListResponse(results).Body)
 }
@@ -67,15 +71,22 @@ func (h *Document) List(c echo.Context) error {
 //	400: ErrorResponse
 //	500: ErrorResponse
 func (h *Document) Upload(c echo.Context) error {
+	const op = "handlers.document.Upload"
+	ctx := c.Request().Context()
+
 	req := dto.UploadDocumentRequest{}
 	if err := c.Bind(&req); err != nil {
 		return err
 	}
 
-	result, err := h.service.Upload(c.Request().Context(), req.Model())
+	doc := req.Model()
+	h.logger.InfoContext(ctx, op, "upload file received", "filename", doc.Filename, "size", doc.Size)
+
+	result, err := h.service.Upload(ctx, doc)
 	if err != nil {
 		return err
 	}
+	h.logger.InfoContext(ctx, op, "document uploaded", "document_id", result.DocumentID)
 
 	return c.JSON(http.StatusOK, dto.NewUploadDocumentResponse(result).Body)
 }

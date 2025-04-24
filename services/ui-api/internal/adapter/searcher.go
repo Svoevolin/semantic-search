@@ -28,6 +28,6 @@ func NewSearcherClient(client *http.Client, logger logger.Logger, cfg *config.Ap
 
 func (c *SearcherClient) Search(ctx context.Context, query string) ([]domain.Document, error) {
 	const op = "adapter.searcher.client.Search"
-	_ = op
+	c.logger.DebugContext(ctx, op, "searcher called", "query", query)
 	return []domain.Document{}, nil
 }

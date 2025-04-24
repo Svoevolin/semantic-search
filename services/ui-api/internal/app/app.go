@@ -17,11 +17,11 @@ func New(publicServer *PublicServer, container *Container) *App {
 	}
 }
 
-func (app *App) Run(_ context.Context) error {
+func (app *App) Run(ctx context.Context) error {
 	const op = "app.Run"
 
 	go func() {
-		if err := app.publicServer.Start(); err != nil {
+		if err := app.publicServer.Start(ctx); err != nil {
 			app.container.Logger.Panic(op, err.Error())
 		}
 	}()

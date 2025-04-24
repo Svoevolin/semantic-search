@@ -16,6 +16,7 @@ type App struct {
 	PublicServer
 	Minio
 	Searcher
+	Kafka
 }
 
 //type DB struct {
@@ -58,6 +59,11 @@ type Minio struct {
 	SecretKey string `env:"UI_API_MINIO_SECRET_KEY,notEmpty"`
 	Bucket    string `env:"UI_API_MINIO_BUCKET,notEmpty"`
 	UseSSL    bool   `env:"UI_API_MINIO_USE_SSL,notEmpty"`
+}
+
+type Kafka struct {
+	Broker string `env:"UI_API_KAFKA_BROKER,notEmpty"`
+	Topic  string `env:"UI_API_KAFKA_TOPIC,notEmpty"`
 }
 
 func New[T any](files ...string) (T, error) {

@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/adapter"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/adapter/httpclient"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/config"
@@ -30,7 +31,7 @@ func (c *Container) initContainer(_ context.Context, cfg config.App) error {
 	const op = "internal.app.container.initContainer"
 
 	c.Config = &cfg
-	c.Logger = sl.NewLogger(c.Config)
+	c.Logger = sl.NewLogger(c.Config, sl.NewAttribute("service", "ui-api"))
 
 	clientBuilder := httpclient.NewBuilder(httpclient.BuilderConfig{Logging: c.Config.LoggingOutgoingReqEnable}).
 		WithLogging(c.Logger).
@@ -46,8 +47,10 @@ func (c *Container) initContainer(_ context.Context, cfg config.App) error {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
+	kafkaProducer := adapter.NewKafkaAdapter(c.Config, c.Logger)
+
 	// Service
-	c.DocumentService = service.NewDocument(searchClient, storageClient, c.Logger)
+	c.DocumentService = service.NewDocument(searchClient, storageClient, kafkaProducer, c.Logger)
 
 	return nil
 }

@@ -14,15 +14,16 @@ func (f roundTripperFunc) RoundTrip(r *http.Request) (*http.Response, error) {
 }
 
 func LoggingWrapper(logger logger.Logger) RoundTripperDecorator {
+	const op = "httpclient.LoggingWrapper"
 	return func(next http.RoundTripper) http.RoundTripper {
 		return roundTripperFunc(func(r *http.Request) (*http.Response, error) {
-			logger.InfoContext(r.Context(), "Outgoing request", "method", r.Method, "url", r.URL)
+			logger.InfoContext(r.Context(), op, "Outgoing request", "method", r.Method, "url", r.URL)
 
 			resp, err := next.RoundTrip(r)
 			if err != nil {
-				logger.ErrorContext(r.Context(), "Request failed", "error", err.Error())
+				logger.ErrorContext(r.Context(), op, "Request failed", "error", err.Error())
 			} else {
-				logger.InfoContext(r.Context(), "Response received", "status", resp.StatusCode)
+				logger.InfoContext(r.Context(), op, "Response received", "status", resp.StatusCode)
 			}
 
 			return resp, err

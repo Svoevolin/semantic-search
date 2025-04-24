@@ -12,14 +12,25 @@ import (
 )
 
 const (
+	opRecord   = "operation"
 	LevelPanic = slog.Level(12)
 )
+
+type Attribute = slog.Attr
+
+func NewAttribute(key string, value any) Attribute {
+	return slog.Any(key, value)
+}
+
+func Err(err error) slog.Attr {
+	return slog.Any("error", err)
+}
 
 type SlogLogger struct {
 	log *slog.Logger
 }
 
-func NewLogger(cfg *config.App) *SlogLogger {
+func NewLogger(cfg *config.App, attributes ...Attribute) *SlogLogger {
 	level := setupLevel(cfg.Level)
 
 	// Логи выбрасываются, их не нужно мокать (для тестов)
@@ -38,7 +49,11 @@ func NewLogger(cfg *config.App) *SlogLogger {
 	}
 
 	if cfg.Pretty {
-		base = prettylog.New(opts)
+		base = prettylog.New(
+			opts,
+			prettylog.WithDestinationWriter(os.Stdout),
+			prettylog.WithColor(),
+		)
 	} else {
 		switch strings.ToLower(cfg.Format) {
 		case "json":
@@ -49,6 +64,9 @@ func NewLogger(cfg *config.App) *SlogLogger {
 			base = slog.NewJSONHandler(os.Stdout, opts)
 		}
 	}
+
+	base.WithAttrs(attributes)
+
 	// Оборачиваем в CtxHandler для поддержки контекстных данных
 	logger := slog.New(handler.NewCtxHandler(base))
 	slog.SetDefault(logger)
@@ -70,44 +88,44 @@ func setupLevel(level string) slog.Level {
 	}
 }
 
-func (l *SlogLogger) Debug(msg string, keysAndVals ...any) {
-	l.log.Debug(msg, keysAndVals...)
+func (l *SlogLogger) Debug(op string, msg string, keysAndVals ...any) {
+	l.log.Debug(msg, append([]any{opRecord, op}, keysAndVals...)...)
 }
 
-func (l *SlogLogger) Info(msg string, keysAndVals ...any) {
-	l.log.Info(msg, keysAndVals...)
+func (l *SlogLogger) Info(op string, msg string, keysAndVals ...any) {
+	l.log.Info(msg, append([]any{opRecord, op}, keysAndVals...)...)
 }
 
-func (l *SlogLogger) Warn(msg string, keysAndVals ...any) {
-	l.log.Warn(msg, keysAndVals...)
+func (l *SlogLogger) Warn(op string, msg string, keysAndVals ...any) {
+	l.log.Warn(msg, append([]any{opRecord, op}, keysAndVals...)...)
 }
 
-func (l *SlogLogger) Error(msg string, keysAndVals ...any) {
-	l.log.Error(msg, keysAndVals...)
+func (l *SlogLogger) Error(op string, msg string, keysAndVals ...any) {
+	l.log.Error(msg, append([]any{opRecord, op}, keysAndVals...)...)
 }
 
-func (l *SlogLogger) Panic(msg string, keysAndVals ...any) {
-	l.log.Log(context.Background(), LevelPanic, msg, keysAndVals...)
+func (l *SlogLogger) Panic(op string, msg string, keysAndVals ...any) {
+	l.log.Log(context.Background(), LevelPanic, msg, append([]any{opRecord, op}, keysAndVals...)...)
 	panic(msg)
 }
 
-func (l *SlogLogger) DebugContext(ctx context.Context, msg string, keysAndVals ...any) {
-	l.log.DebugContext(ctx, msg, keysAndVals...)
+func (l *SlogLogger) DebugContext(ctx context.Context, op string, msg string, keysAndVals ...any) {
+	l.log.DebugContext(ctx, msg, append([]any{opRecord, op}, keysAndVals...)...)
 }
 
-func (l *SlogLogger) InfoContext(ctx context.Context, msg string, keysAndVals ...any) {
-	l.log.InfoContext(ctx, msg, keysAndVals...)
+func (l *SlogLogger) InfoContext(ctx context.Context, op string, msg string, keysAndVals ...any) {
+	l.log.InfoContext(ctx, msg, append([]any{opRecord, op}, keysAndVals...)...)
 }
 
-func (l *SlogLogger) WarnContext(ctx context.Context, msg string, keysAndVals ...any) {
-	l.log.WarnContext(ctx, msg, keysAndVals...)
+func (l *SlogLogger) WarnContext(ctx context.Context, op string, msg string, keysAndVals ...any) {
+	l.log.WarnContext(ctx, msg, append([]any{opRecord, op}, keysAndVals...)...)
 }
 
-func (l *SlogLogger) ErrorContext(ctx context.Context, msg string, keysAndVals ...any) {
-	l.log.ErrorContext(ctx, msg, keysAndVals...)
+func (l *SlogLogger) ErrorContext(ctx context.Context, op string, msg string, keysAndVals ...any) {
+	l.log.ErrorContext(ctx, msg, append([]any{opRecord, op}, keysAndVals...)...)
 }
 
-func (l *SlogLogger) PanicContext(ctx context.Context, msg string, keysAndVals ...any) {
-	l.log.Log(ctx, LevelPanic, msg, keysAndVals...)
+func (l *SlogLogger) PanicContext(ctx context.Context, op string, msg string, keysAndVals ...any) {
+	l.log.Log(ctx, LevelPanic, msg, append([]any{opRecord, op}, keysAndVals...)...)
 	panic(msg)
 }

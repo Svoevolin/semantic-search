@@ -13,6 +13,7 @@ import (
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/config"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/domain"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger"
+	sl "github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger/slog"
 )
 
 // compile-time check
@@ -53,12 +54,16 @@ func NewMinioClient(logger logger.Logger, cfg *config.App) (*MinioClient, error)
 }
 
 func (m *MinioClient) Upload(ctx context.Context, file *multipart.FileHeader) (domain.UploadResult, error) {
+	const op = "adapter.MinioClient.Upload"
+	m.logger.DebugContext(ctx, op, "starting upload", "filename", file.Filename)
+
 	src, err := file.Open()
 	if err != nil {
+		m.logger.ErrorContext(ctx, op, "file open failed", sl.Err(err))
 		return domain.UploadResult{}, err
 	}
-	//noinspection GoUnhandledErrorResult
 	//nolint:errcheck
+	//noinspection GoUnhandledErrorResult
 	defer src.Close()
 
 	objectName := fmt.Sprintf("%d-%s", time.Now().UnixNano(), filepath.Base(file.Filename))
@@ -67,6 +72,7 @@ func (m *MinioClient) Upload(ctx context.Context, file *multipart.FileHeader) (d
 		ContentType: file.Header.Get("Content-Type"),
 	})
 	if err != nil {
+		m.logger.ErrorContext(ctx, op, "upload failed", sl.Err(err))
 		return domain.UploadResult{}, err
 	}
 
@@ -75,6 +81,7 @@ func (m *MinioClient) Upload(ctx context.Context, file *multipart.FileHeader) (d
 		Host:   m.client.EndpointURL().Host,
 		Path:   fmt.Sprintf("/%s/%s", m.bucketName, info.Key),
 	}
+	m.logger.DebugContext(ctx, op, "upload succeeded", "object_name", info.Key, "url", objectURL.String())
 
 	return domain.UploadResult{
 		ObjectName: info.Key,

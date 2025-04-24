@@ -25,26 +25,28 @@ func NewPublicServer(container *Container) *PublicServer {
 	return server
 }
 
-func (s *PublicServer) Configure(container *Container) (*PublicServer, error) {
+func (s *PublicServer) Configure(c *Container) (*PublicServer, error) {
 	s.echo = echo.New()
 
 	s.echo.Use(
 		echoMiddleware.Recover(),
-		middlewares.PublicServerCORSMiddleware(container.Config),
+		middlewares.PublicServerCORSMiddleware(c.Config),
 		middlewares.RequestIDMiddleware(),
+		middlewares.RequestLogger(c.Logger, "Public server request"),
 	)
 
-	s.v1(container)
+	s.v1(c)
 	return s, nil
 }
 
-func (s *PublicServer) Start() error {
+func (s *PublicServer) Start(ctx context.Context) error {
 	const op = "app.public_server.Start"
 
 	if s.echo == nil {
 		return errors.New(op + ": didn't init echo")
 	}
 
+	s.logger.InfoContext(ctx, op, "starting public server", "port", s.cfg.Port)
 	return s.echo.Start(fmt.Sprintf(":%s", s.cfg.Port))
 }
 
@@ -54,6 +56,7 @@ func (s *PublicServer) Shutdown(ctx context.Context) error {
 	if s.echo == nil {
 		return errors.New(op + ": didn't init echo")
 	}
+	s.logger.InfoContext(ctx, op, "shutting down public server")
 	return s.echo.Shutdown(ctx)
 }
 

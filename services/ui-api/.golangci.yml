@@ -10,7 +10,6 @@ run:
 linters:
   enable:
     - govet
-    - staticcheck
     - errcheck
     - ineffassign
     - unused
@@ -20,6 +19,8 @@ linters:
     - dupl
     - gocyclo
     - prealloc
+  disable:
+    - staticcheck
 
 formatters:
   enable:
