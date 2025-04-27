@@ -15,10 +15,10 @@ up: prepare-env ## Запуск всех контейнеров через docke
 down: prepare-env ## Остановка всех контейнеров
 	docker-compose --env-file $(ENV_FILE) -f $(COMPOSE_FILE) down
 
-prepare-env-local:
+prepare-env-local:## Подготовить переменные окружения для локального запуска сервисов
 	cp samples/.env.local .env
 
-prepare-env:
+prepare-env: ## Подготовить переменные окружения для запуска сервисов в контейнерах
 	cp samples/.env.docker .env
 
 logs-ui-api: ## Просмотр логов только ui-api
