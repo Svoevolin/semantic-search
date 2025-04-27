@@ -28,14 +28,21 @@ func NewKafkaAdapter(cfg *config.App, logger logger.Logger) *KafkaAdapter {
 		retries  = 10
 		interval = 3 * time.Second
 	)
+	logger.Debug(op, "Connecting to Kafka broker", "broker", cfg.Kafka.Broker)
 
+	var lastErr error
 	for i := 0; i < retries; i++ {
 		_, err := kafka.DialLeader(context.Background(), "tcp", cfg.Kafka.Broker, cfg.Kafka.Topic, 0)
+		lastErr = err
 		if err == nil {
 			break
 		}
-		logger.Warn(op, fmt.Sprintf("Kafka not ready (attempt %d/%d)", i+1, retries), sl.Err(err))
+		logger.Warn(op, fmt.Sprintf("Kafka not ready (attempt %d/%d)", i+1, retries), "err", sl.Err(err))
 		time.Sleep(interval)
+	}
+
+	if lastErr != nil {
+		logger.Panic(op, "Kafka not available after retries", "err", sl.Err(lastErr))
 	}
 
 	return &KafkaAdapter{

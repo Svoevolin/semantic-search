@@ -13,7 +13,7 @@ type UploadDocumentRequest struct {
 	// in: formData
 	// required: true
 	// swagger:file
-	File *multipart.FileHeader `form:"file"`
+	File *multipart.FileHeader `json:"file" form:"file"`
 }
 
 func (r *UploadDocumentRequest) Model() *multipart.FileHeader {

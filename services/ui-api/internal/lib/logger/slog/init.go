@@ -65,7 +65,7 @@ func NewLogger(cfg *config.App, attributes ...Attribute) *SlogLogger {
 		}
 	}
 
-	base.WithAttrs(attributes)
+	base = base.WithAttrs(attributes)
 
 	// Оборачиваем в CtxHandler для поддержки контекстных данных
 	logger := slog.New(handler.NewCtxHandler(base))
