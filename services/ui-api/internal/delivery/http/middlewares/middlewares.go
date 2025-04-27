@@ -33,6 +33,7 @@ func RequestIDMiddleware() echo.MiddlewareFunc {
 		ctx := c.Request().Context()
 		ctx = context.WithValue(ctx, HeaderRequestID, reqID)             // Для клиентов
 		ctx = context.WithValue(ctx, slogHandler.RequestIDLogKey, reqID) // Для логов
+		c.Set(slogHandler.RequestIDLogKey, reqID)                        // Для кафки
 		c.SetRequest(c.Request().WithContext(ctx))
 	}
 

@@ -12,8 +12,6 @@ RUN go build -o ui-api ./cmd/ui-api
 
 FROM alpine:3.19
 
-RUN apk add --no-cache ca-certificates
-
 COPY --from=builder /app/ui-api /ui-api
 COPY --from=builder /app/api/swagger.json /api/swagger.json
 

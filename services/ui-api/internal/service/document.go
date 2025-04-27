@@ -37,20 +37,21 @@ func (s *Document) GetList(ctx context.Context, query domain.DocumentListQuery) 
 	return s.searcher.Search(ctx, query.Query)
 }
 
-func (s *Document) Upload(ctx context.Context, file *multipart.FileHeader) (domain.UploadedDocument, error) {
+func (s *Document) Upload(ctx context.Context, requestID string, file *multipart.FileHeader) (domain.UploadedDocument, error) {
 	const op = "service.Document.Upload"
+
+	docID := uuid.New().String()
 
 	uploadRes, err := s.storageClient.Upload(ctx, file)
 	if err != nil {
 		return domain.UploadedDocument{}, fmt.Errorf("upload to storage failed: %w", err)
 	}
 
-	docID := uuid.New().String()
-
 	err = s.producer.PublishUpload(ctx, domain.UploadEvent{
 		DocumentID: docID,
 		FileName:   file.Filename,
 		ObjectURL:  uploadRes.URL.String(),
+		RequestID:  requestID,
 	})
 	if err != nil {
 		s.logger.ErrorContext(ctx, op, "publish to kafka failed", sl.Err(err))

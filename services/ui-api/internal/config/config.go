@@ -54,16 +54,16 @@ type CORSConfig struct {
 }
 
 type Minio struct {
-	Endpoint  string `env:"UI_API_MINIO_ENDPOINT,notEmpty"`
-	AccessKey string `env:"UI_API_MINIO_ACCESS_KEY,notEmpty"`
-	SecretKey string `env:"UI_API_MINIO_SECRET_KEY,notEmpty"`
-	Bucket    string `env:"UI_API_MINIO_BUCKET,notEmpty"`
-	UseSSL    bool   `env:"UI_API_MINIO_USE_SSL,notEmpty"`
+	Endpoint  string `env:"MINIO_ENDPOINT,notEmpty"`
+	AccessKey string `env:"MINIO_ACCESS_KEY,notEmpty"`
+	SecretKey string `env:"MINIO_SECRET_KEY,notEmpty"`
+	Bucket    string `env:"MINIO_BUCKET,notEmpty"`
+	UseSSL    bool   `env:"MINIO_USE_SSL,notEmpty"`
 }
 
 type Kafka struct {
-	Broker string `env:"UI_API_KAFKA_BROKER,notEmpty"`
-	Topic  string `env:"UI_API_KAFKA_TOPIC,notEmpty"`
+	Broker string `env:"KAFKA_BROKER,notEmpty"`
+	Topic  string `env:"KAFKA_TOPIC,notEmpty"`
 }
 
 func New[T any](files ...string) (T, error) {

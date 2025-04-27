@@ -7,6 +7,7 @@ import (
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/delivery/http/dto"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/domain"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger"
+	slogHandler "github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger/slog/handler"
 )
 
 type Document struct {
@@ -82,7 +83,12 @@ func (h *Document) Upload(c echo.Context) error {
 	doc := req.Model()
 	h.logger.InfoContext(ctx, op, "upload file received", "filename", doc.Filename, "size", doc.Size)
 
-	result, err := h.service.Upload(ctx, doc)
+	reqID, ok := c.Get(slogHandler.RequestIDLogKey).(string)
+	if !ok {
+		reqID = "unknown"
+	}
+
+	result, err := h.service.Upload(ctx, reqID, doc)
 	if err != nil {
 		return err
 	}

@@ -29,5 +29,5 @@ type Searcher interface {
 
 type DocumentService interface {
 	GetList(ctx context.Context, query DocumentListQuery) ([]Document, error)
-	Upload(ctx context.Context, file *multipart.FileHeader) (UploadedDocument, error)
+	Upload(ctx context.Context, requestID string, file *multipart.FileHeader) (UploadedDocument, error)
 }

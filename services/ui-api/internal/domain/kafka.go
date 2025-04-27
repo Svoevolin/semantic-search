@@ -6,6 +6,7 @@ type UploadEvent struct {
 	DocumentID string
 	FileName   string
 	ObjectURL  string
+	RequestID  string
 }
 
 type KafkaProducer interface {
