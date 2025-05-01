@@ -1,4 +1,18 @@
 services:
+  vectorizer:
+      build:
+        context: ../../services/vectorizer
+        dockerfile: docker/Dockerfile
+      container_name: vectorizer
+      depends_on:
+        - kafka
+        - minio
+        - qdrant
+      env_file:
+        - ../../.env
+      networks:
+        - semantic-network
+
   ui-api:
     build:
       context: ../../services/ui-api
@@ -84,7 +98,6 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - semantic-network
-
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
