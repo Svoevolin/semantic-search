@@ -33,8 +33,8 @@ func NewDocument(
 	}
 }
 
-func (s *Document) GetList(ctx context.Context, query domain.DocumentListQuery) ([]domain.Document, error) {
-	return s.searcher.Search(ctx, query.Query)
+func (s *Document) GetList(ctx context.Context, query domain.DocumentListQuery) ([]domain.Document, bool, error) {
+	return s.searcher.Search(ctx, query)
 }
 
 func (s *Document) Upload(ctx context.Context, requestID string, file *multipart.FileHeader) (domain.UploadedDocument, error) {

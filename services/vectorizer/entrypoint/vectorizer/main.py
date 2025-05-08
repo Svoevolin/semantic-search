@@ -19,7 +19,7 @@ async def main():
     kafka_consumer = KafkaConsumerAdapter(config, logger)
     storage_downloader = MinioClient(config, logger)
     extractor = PdfTextExtractor(logger)
-    vectorizer = SentenceTransformerVectorizer(logger)
+    vectorizer = SentenceTransformerVectorizer(config, logger)
     qdrant_uploader = QdrantUploaderAdapter(config, logger)
     await qdrant_uploader.initialize()
 

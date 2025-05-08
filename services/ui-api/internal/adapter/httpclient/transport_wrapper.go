@@ -17,7 +17,8 @@ func LoggingWrapper(logger logger.Logger) RoundTripperDecorator {
 	const op = "httpclient.LoggingWrapper"
 	return func(next http.RoundTripper) http.RoundTripper {
 		return roundTripperFunc(func(r *http.Request) (*http.Response, error) {
-			logger.InfoContext(r.Context(), op, "Outgoing request", "method", r.Method, "url", r.URL)
+
+			logger.InfoContext(r.Context(), op, "Outgoing request", "method", r.Method, "url", r.URL, "body")
 
 			resp, err := next.RoundTrip(r)
 			if err != nil {

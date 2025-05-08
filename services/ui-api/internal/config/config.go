@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net/url"
 	"path/filepath"
 	"time"
 
@@ -33,6 +34,7 @@ type App struct {
 //}
 
 type Searcher struct {
+	URL     url.URL       `env:"SEARCHER_URL,notEmpty"`
 	Timeout time.Duration `env:"UI_API_SEARCHER_HTTPCLIENT_TIMEOUT" envDefault:"10s"`
 }
 

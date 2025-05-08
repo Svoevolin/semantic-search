@@ -1,4 +1,5 @@
 from structlog import BoundLogger
+from uuid import uuid4
 
 from internal.domain.document import (
     DocumentServiceI,
@@ -37,12 +38,25 @@ class DocumentService(DocumentServiceI):
             text_file = await self._extractor.extract(raw_file)
             self._logger.info("Text extracted successfully", operation=op, document_id=event.document_id, text_size=len(text_file.content))
 
-            embedding = await self._vectorizer.vectorize(text_file)
-            self._logger.info("Text vectorized successfully", operation=op, document_id=event.document_id, vector_count=len(embedding.values))
+            embeddings = await self._vectorizer.vectorize_chunks(text_file)
+            self._logger.info("Text vectorized successfully", operation=op, document_id=event.document_id, vector_count=len(embeddings))
 
-            await self._uploader.upload(
-                document_id=event.document_id, vector=embedding, payload={"file_name": event.file_name})
-            self._logger.info("Vector uploaded to Qdrant successfully", operation=op, document_id=event.document_id)
+            for i, embedding in enumerate(embeddings):
+                await self._uploader.upload(
+                    document_id=str(uuid4()),
+                    vector=embedding,
+                    payload={
+                        "document_id": event.document_id,
+                        "file_name": event.file_name,
+                        "chunk_index": i,
+                        "text": embedding.chunk_text,  # ← кладём оригинальный чанк текста
+                    },
+                )
+
+            # await self._uploader.upload(
+            #     document_id=event.document_id, vector=embedding, payload={"file_name": event.file_name})
+
+            self._logger.info("Vectors uploaded to Qdrant successfully", operation=op, document_id=event.document_id)
 
         except Exception as e:
             self._logger.error("Failed to process document", operation=op, document_id=event.document_id, error=str(e))

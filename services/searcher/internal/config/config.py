@@ -3,33 +3,20 @@ from pydantic import Field
 from pathlib import Path
 from dotenv import load_dotenv
 
-
 class AppConfig(BaseSettings):
     # Logger
     logger_level: str = Field(..., alias="VECTOR_LOG_LEVEL")
     logger_format: str = Field(..., alias="VECTOR_LOG_FORMAT")
     logger_pretty_enable: bool = Field(..., alias="VECTOR_LOG_PRETTY_ENABLE")
 
-    # Minio
-    minio_endpoint: str = Field(..., alias="MINIO_ENDPOINT")
-    minio_access_key: str = Field(..., alias="MINIO_ACCESS_KEY")
-    minio_secret_key: str = Field(..., alias="MINIO_SECRET_KEY")
-    minio_bucket: str = Field(..., alias="MINIO_BUCKET")
-    minio_use_ssl: bool = Field(False, alias="MINIO_USE_SSL")
-
-    # Kafka
-    kafka_broker: str = Field(..., alias="KAFKA_BROKER")
-    kafka_topic: str = Field(..., alias="KAFKA_TOPIC")
-
     # Vectorizer
     embedding_model_name: str = Field(..., alias="EMBEDDING_MODEL")
+    score_threshold: float = Field(..., alias="SCORE_THRESHOLD")
 
     # Qdrant
     qdrant_host: str = Field(..., alias="QDRANT_HOST")
     qdrant_port: int = Field(..., alias="QDRANT_PORT")
     qdrant_collection: str = Field(..., alias="QDRANT_COLLECTION")
-
-    qdrant_embedding_size: int = Field(..., alias="EMBEDDING_SIZE")
 
     class Config:
         env_file = "../../.env"

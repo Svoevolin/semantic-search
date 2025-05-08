@@ -29,6 +29,7 @@ class VectorEmbedding(BaseModel):
     """Эмбеддинг вектора."""
 
     values: list[float]
+    chunk_text: str
 
 
 # ====== Интерфейсы портов ======
@@ -62,7 +63,7 @@ class Vectorizer(ABC):
     """Векторизация текста."""
 
     @abstractmethod
-    async def vectorize(self, text: TextFile) -> VectorEmbedding:
+    async def vectorize_chunks(self, text: TextFile) -> list[VectorEmbedding]:
         pass
 
 

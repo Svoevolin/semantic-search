@@ -1,4 +1,22 @@
 services:
+
+  searcher:
+    build:
+      context: ../../services/searcher
+      dockerfile: docker/Dockerfile
+    container_name: searcher
+    depends_on:
+      - minio
+      - qdrant
+    ports:
+      - "8081:8081"
+    environment:
+      APP_PORT: 8081
+    env_file:
+      - ../../.env
+    networks:
+      - semantic-network
+
   vectorizer:
       build:
         context: ../../services/vectorizer
@@ -19,8 +37,10 @@ services:
       dockerfile: docker/Dockerfile
     container_name: ui-api
     depends_on:
-      - kafka
-      - minio
+      kafka:
+        condition: service_started
+      minio:
+        condition: service_healthy
     ports:
       - "9999:9999"
     env_file:
@@ -39,24 +59,14 @@ services:
     environment:
       - GO111MODULE=off
 
-#    #  postgres:
-#    image: postgres:15
-#    container_name: postgres
-#    restart: unless-stopped
-#    environment:
-#      POSTGRES_USER: ${DB_USER}
-#      POSTGRES_PASSWORD: ${DB_PASSWORD}
-#      POSTGRES_DB: ${DB_NAME}
-#      PGSSLMODE: ${DB_SSL_MODE}
-#    ports:
-#      - "${DB_PORT}:${DB_PORT}"
-#    volumes:
-#      - pg_data:/var/lib/postgresql/data
-#      - ./init:/docker-entrypoint-initdb.d
-
   minio:
     image: minio/minio
     container_name: minio
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/ready" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
@@ -99,20 +109,6 @@ services:
     networks:
       - semantic-network
 
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    ports:
-      - "8080:8080"
-    depends_on:
-      - kafka
-    environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
-    networks:
-      - semantic-network
-
   qdrant:
     image: qdrant/qdrant:v1.9.0
     container_name: qdrant
@@ -123,6 +119,35 @@ services:
       - qdrant-data:/qdrant/storage
     networks:
       - semantic-network
+
+#  kafka-ui:
+#    image: provectuslabs/kafka-ui:latest
+#    container_name: kafka-ui
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - kafka
+#    environment:
+#      KAFKA_CLUSTERS_0_NAME: local
+#      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+#      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+#    networks:
+#      - semantic-network
+
+    #    #  postgres:
+    #    image: postgres:15
+    #    container_name: postgres
+    #    restart: unless-stopped
+    #    environment:
+    #      POSTGRES_USER: ${DB_USER}
+    #      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    #      POSTGRES_DB: ${DB_NAME}
+    #      PGSSLMODE: ${DB_SSL_MODE}
+    #    ports:
+    #      - "${DB_PORT}:${DB_PORT}"
+    #    volumes:
+    #      - pg_data:/var/lib/postgresql/data
+    #      - ./init:/docker-entrypoint-initdb.d
 
 volumes:
   pg_data:

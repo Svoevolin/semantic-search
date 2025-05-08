@@ -11,7 +11,6 @@ import (
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/delivery/http/handlers"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/delivery/http/middlewares"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/lib/logger"
-	mockService "github.com/svoevolin/semantic-search/services/ui-api/internal/mock"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
@@ -68,8 +67,7 @@ func (s *PublicServer) Echo() *echo.Echo {
 func (s *PublicServer) v1(c *Container) {
 	s.echo.File("/swagger.json", "api/swagger.json")
 	// Handler init
-	mock := &mockService.MockDocumentService{}
-	documentHandler := handlers.NewDocument(mock, c.Logger)
+	documentHandler := handlers.NewDocument(c.DocumentService, c.Logger)
 
 	// Handler register
 	v1 := s.echo.Group("/api/v1")

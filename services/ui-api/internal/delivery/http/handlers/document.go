@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/svoevolin/semantic-search/services/ui-api/internal/delivery/http/dto"
@@ -45,10 +46,11 @@ func (h *Document) List(c echo.Context) error {
 		return err
 	}
 
-	results, err := h.service.GetList(ctx, req.Model())
+	results, hasMore, err := h.service.GetList(ctx, req.Model())
 	if err != nil {
 		return err
 	}
+	c.Response().Header().Set("X-Has-More", strconv.FormatBool(hasMore))
 	h.logger.InfoContext(ctx, op, "documents found", "count", len(results))
 
 	return c.JSON(http.StatusOK, dto.NewDocumentListResponse(results).Body)

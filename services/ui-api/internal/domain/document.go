@@ -20,14 +20,15 @@ type UploadedDocument struct {
 }
 
 type DocumentListQuery struct {
-	Query string
+	Query     string
+	Paginator Paginator
 }
 
 type Searcher interface {
-	Search(ctx context.Context, query string) ([]Document, error)
+	Search(ctx context.Context, query DocumentListQuery) ([]Document, bool, error)
 }
 
 type DocumentService interface {
-	GetList(ctx context.Context, query DocumentListQuery) ([]Document, error)
+	GetList(ctx context.Context, query DocumentListQuery) ([]Document, bool, error)
 	Upload(ctx context.Context, requestID string, file *multipart.FileHeader) (UploadedDocument, error)
 }

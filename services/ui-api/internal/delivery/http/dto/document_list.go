@@ -10,12 +10,15 @@ import (
 type DocumentListRequest struct {
 	// Semantic query text
 	// example: sustainable development in corporate policy
-	Query string `json:"query"`
+	Query string `json:"query" validate:"required"`
+
+	Paginator Paginator
 }
 
 func (r DocumentListRequest) Model() domain.DocumentListQuery {
 	return domain.DocumentListQuery{
-		Query: r.Query,
+		Query:     r.Query,
+		Paginator: r.Paginator.Model(),
 	}
 }
 
