@@ -10,6 +10,7 @@ type Document struct {
 	DocumentID string    `json:"document_id"`
 	FileName   string    `json:"file_name"`
 	MatchScore float64   `json:"match_score"`
+	Snippet    string    `json:"snippet"`
 	UploadedAt time.Time `json:"uploaded_at"`
 }
 

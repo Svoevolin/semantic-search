@@ -54,6 +54,10 @@ type DocumentListResponseItem struct {
 	// example: 0.91
 	MatchScore float64 `json:"match_score"`
 
+	// Fragment of doc
+	// example: some-text-fragment
+	Snippet string `json:"snippet"`
+
 	// Upload timestamp
 	// example: 2025-04-20T10:00:00Z
 	UploadedAt time.Time `json:"uploaded_at"`
@@ -65,5 +69,6 @@ func newDocumentListResponseItem(d domain.Document) DocumentListResponseItem {
 		FileName:   d.FileName,
 		MatchScore: d.MatchScore,
 		UploadedAt: d.UploadedAt,
+		Snippet:    d.Snippet,
 	}
 }

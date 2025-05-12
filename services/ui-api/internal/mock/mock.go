@@ -16,7 +16,7 @@ func NewMockDocumentService() *MockDocumentService {
 	return &MockDocumentService{}
 }
 
-func (m *MockDocumentService) GetList(ctx context.Context, query domain.DocumentListQuery) ([]domain.Document, error) {
+func (m *MockDocumentService) GetList(ctx context.Context, query domain.DocumentListQuery) ([]domain.Document, bool, error) {
 	now := time.Now()
 	return []domain.Document{
 		{
@@ -24,20 +24,23 @@ func (m *MockDocumentService) GetList(ctx context.Context, query domain.Document
 			FileName:   "semantic-guide.pdf",
 			MatchScore: 0.93,
 			UploadedAt: now.Add(-2 * time.Hour),
+			Snippet:    "Фрагмент документа в котором нашлись совпадения документадокументадокументадокументадокументадокументадокументадокументадокументадокументадокументадокумента",
 		},
 		{
 			DocumentID: uuid.NewString(),
 			FileName:   "ai-whitepaper.pdf",
 			MatchScore: 0.89,
 			UploadedAt: now.Add(-6 * time.Hour),
+			Snippet:    "Фрагмент документа в котором нашлись совпадения 2 документадокументадокументадокументадокументадокументадокументадокументадокумента",
 		},
 		{
 			DocumentID: uuid.NewString(),
 			FileName:   "eco-policy.pdf",
 			MatchScore: 0.84,
 			UploadedAt: now.Add(-24 * time.Hour),
+			Snippet:    "Фрагмент документа в котором нашлись совпадения 3 документадокументадокументадокументадокументадокументадокументадокументадокументадокументадокументадокументадокументадокументадокументадокументадокументадокументадокумента",
 		},
-	}, nil
+	}, false, nil
 }
 
 func (m *MockDocumentService) Upload(ctx context.Context, requestID string, file *multipart.FileHeader) (domain.UploadedDocument, error) {
@@ -72,12 +75,5 @@ func (m *MockKafkaProducer) PublishUpload(ctx context.Context, event domain.Uplo
 type MockSearcherClient struct{}
 
 func (m *MockSearcherClient) Search(ctx context.Context, query string) ([]domain.Document, error) {
-	return []domain.Document{
-		{
-			DocumentID: uuid.NewString(),
-			FileName:   "search-result.pdf",
-			MatchScore: 0.88,
-			UploadedAt: time.Now().Add(-2 * time.Hour),
-		},
-	}, nil
+	return nil, nil
 }
